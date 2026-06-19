@@ -743,21 +743,6 @@
     }
     .ak-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
-    .ak-preview {
-      border-top: 1px solid var(--border-subtle);
-      background: var(--bg-secondary);
-      padding: 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height var(--t-slow);
-    }
-    .ak-preview.open { max-height: 640px; }
-    .ak-preview-inner { height: 600px; }
-    .ak-preview-inner iframe {
-      width: 100%; height: 100%; border: 0; background: #fff;
-    }
-    .ak-preview-img { padding: var(--space-md); }
-    .ak-preview-img img { width: 100%; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
     .ak-note {
       padding: 0 18px 14px;
       font-size: var(--font-size-sm);
@@ -1188,7 +1173,6 @@
         display: block; padding: 14px 18px; font-size: 10pt; color: #555;
         border-top: 1px dashed #ccc;
       }
-      .ak-preview { max-height: none !important; }
       .block { animation: none !important; }
       *, *::before, *::after { animation: none !important; transition: none !important; }
     }
@@ -1738,33 +1722,9 @@
   }
 
   function renderAnswerKey(block) {
-    var provider = detectProvider(block.url);
-    var previewId = 'akprev_' + block.id;
-    var canPreview = false, previewHtml = '';
-
-    if (block.imageUrl) {
-      canPreview = true;
-      previewHtml = '<div class="ak-preview-img"><img src="' + escapeHtml(block.imageUrl) + '" alt="Answer key" /></div>';
-    } else if (provider === 'drive') {
-      var id = driveFileId(block.url);
-      if (id) {
-        canPreview = true;
-        previewHtml = '<div class="ak-preview-inner"><iframe src="https://drive.google.com/file/d/' + id + '/preview" loading="lazy"></iframe></div>';
-      }
-    } else if (block.url && /\.pdf(\?|$)/i.test(block.url)) {
-      canPreview = true;
-      var src = provider === 'dropbox' ? dropboxDirect(block.url) : block.url;
-      previewHtml = '<div class="ak-preview-inner"><iframe src="' + escapeHtml(src) + '" loading="lazy"></iframe></div>';
-    }
-
-    var openLink = block.url
-      ? '<a class="btn btn-secondary btn-sm" href="' + escapeHtml(block.url) + '" target="_blank" rel="noopener noreferrer">Open</a>'
-      : (block.imageUrl
-          ? '<a class="btn btn-secondary btn-sm" href="' + escapeHtml(block.imageUrl) + '" target="_blank" rel="noopener noreferrer">Open</a>'
-          : '');
-
-    var previewBtn = canPreview
-      ? '<button class="btn btn-primary btn-sm" onclick="toggleAnswerPreview(\'' + previewId + '\', this)">Show answers</button>'
+    var href = block.url || block.imageUrl || '';
+    var openLink = href
+      ? '<a class="btn btn-primary btn-sm" href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">Open answer key</a>'
       : '';
 
     var note = block.note ? '<div class="ak-note">' + escapeHtml(block.note) + '</div>' : '';
@@ -1777,10 +1737,9 @@
             '<div class="ak-label">Answer Key</div>' +
             '<div class="ak-title">' + escapeHtml(block.title || 'Answer key') + '</div>' +
           '</div>' +
-          '<div class="ak-actions">' + previewBtn + openLink + '</div>' +
+          '<div class="ak-actions">' + openLink + '</div>' +
         '</div>' +
         note +
-        (canPreview ? '<div class="ak-preview" id="' + previewId + '">' + previewHtml + '</div>' : '') +
       '</div>';
   }
 
@@ -1789,14 +1748,6 @@
     var cap = block.caption ? '<figcaption>' + escapeHtml(block.caption) + '</figcaption>' : '';
     return '<div class="img-block"><figure><img src="' + escapeHtml(block.url) + '" alt="' + escapeHtml(block.caption || '') + '" loading="lazy" />' + cap + '</figure></div>';
   }
-
-  /* Toggle the answer-key preview open/closed */
-  window.toggleAnswerPreview = function (previewId, btn) {
-    var el = $(previewId);
-    if (!el) return;
-    var open = el.classList.toggle('open');
-    btn.textContent = open ? 'Hide answers' : 'Show answers';
-  };
 
   /* =====================================================================
      ADMIN — reorder / delete / edit
@@ -1910,7 +1861,7 @@
           '<div class="field" id="f_aklinkwrap" ' + (b.imageUrl ? 'style="display:none;"' : '') + '>' +
             '<label class="field-label">Link to the answer key</label>' +
             '<input type="url" class="text-input" id="f_url" value="' + escapeHtml(b.url || '') + '" placeholder="Paste a Dropbox / Drive PDF link" />' +
-            '<p class="form-help">PDFs &amp; Drive files get an in-page \u201CShow answers\u201D preview.</p>' +
+            '<p class="form-help">Students get an \u201COpen answer key\u201D button that opens the file in a new tab.</p>' +
           '</div>' +
           '<div class="field" id="f_akimgwrap" ' + (!b.imageUrl ? 'style="display:none;"' : '') + '>' +
             '<label class="field-label">Answer key image</label>' +
