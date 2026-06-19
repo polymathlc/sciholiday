@@ -2390,6 +2390,13 @@
     // Restore a returning student's session (so they skip the gate)
     var savedEmail = null;
     try { savedEmail = localStorage.getItem(STORAGE_KEY_EMAIL); } catch (e) {}
+    var hasSession = savedEmail && isValidEmail(savedEmail);
+
+    // The sign-in gate is static HTML — a brand-new visitor doesn't need to
+    // wait on Firestore to see (and use) it, so drop the loader right away.
+    // Returning students keep the loader until their content is ready, so
+    // they don't flash an empty page during the auto-unlock.
+    if (!hasSession) hideBoot();
 
     // Auth state drives admin mode
     auth.onAuthStateChanged(function (user) {
@@ -2398,7 +2405,7 @@
       } else {
         if (state.isAdmin) exitAdminMode();
         // Student path
-        if (savedEmail && isValidEmail(savedEmail) && !state.isAdmin) {
+        if (hasSession && !state.isAdmin) {
           state.viewerEmail = savedEmail;
           unlockContent(savedEmail);
         }
