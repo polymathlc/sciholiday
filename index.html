@@ -360,14 +360,6 @@
       margin-bottom: var(--space-sm);
     }
 
-    .gate-sub {
-      text-align: center;
-      color: var(--text-secondary);
-      font-size: var(--font-size-base);
-      line-height: 1.6;
-      margin-bottom: var(--space-lg);
-    }
-
     .reassure {
       display: flex;
       align-items: flex-start;
@@ -1213,11 +1205,17 @@
            alt="Polymath" class="gate-logo" />
       <div class="gate-eyebrow" id="gateEyebrow">June Holiday Workshop</div>
       <h1 class="gate-title" id="gateTitle">Your Recordings &amp; Answer Keys</h1>
-      <p class="gate-sub" id="gateSub">Enter the email you signed up with to unlock the lesson videos and answer keys from the programme.</p>
 
       <div class="reassure">
         <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
         <div id="reassureText">Already attended? These recordings are <strong>included free</strong> with your workshop — there is nothing more to pay.</div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="nameInput">Your name</label>
+        <input type="text" id="nameInput" class="text-input" placeholder="e.g. Tan Mei Ling"
+               autocomplete="name" />
+        <div class="field-error" id="nameError"></div>
       </div>
 
       <div class="field">
@@ -1368,6 +1366,7 @@
   var APP_DOC_ID = 'holiday_recordings_portal';
   var ADMIN_EMAIL = 'chungzhikai@gmail.com';
   var STORAGE_KEY_EMAIL = 'polymath_portal_verified_email';
+  var STORAGE_KEY_NAME = 'polymath_portal_name';
   var STORAGE_KEY_AGREED = 'polymath_portal_agreed_at';
 
   /* ---------- Firebase init ---------- */
@@ -1390,6 +1389,7 @@
   var state = {
     isAdmin: false,
     viewerEmail: null,
+    viewerName: null,
     blocks: [],
     settings: defaultSettings(),
     editingId: null,        // id of block being edited (null = new)
@@ -2218,9 +2218,10 @@
   }
 
   /* Log a student's access + agreement (the teacher's record of consent) */
-  function logAccess(email) {
+  function logAccess(email, name) {
     try {
       portalRef().collection('access_logs').add({
+        name: name || '',
         email: email,
         agreedToTerms: true,
         feeAtAgreement: state.settings.fee || '$390',
@@ -2234,15 +2235,25 @@
      GATE LOGIC (email + agreement)
      ===================================================================== */
   function refreshGateButton() {
+    var name = $('nameInput').value.trim();
     var email = $('emailInput').value.trim();
     var agreed = $('agreeCheck').checked;
-    $('enterBtn').disabled = !(isValidEmail(email) && agreed);
+    $('enterBtn').disabled = !(name && isValidEmail(email) && agreed);
   }
 
   function wireGate() {
+    var nameInput = $('nameInput');
     var emailInput = $('emailInput');
     var agreeCheck = $('agreeCheck');
     var agreeBox = $('agreeBox');
+
+    nameInput.addEventListener('input', function () {
+      $('nameError').textContent = '';
+      refreshGateButton();
+    });
+    nameInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !$('enterBtn').disabled) submitGate();
+    });
 
     emailInput.addEventListener('input', function () {
       $('emailError').textContent = '';
@@ -2267,20 +2278,27 @@
   }
 
   window.submitGate = function () {
+    var name = $('nameInput').value.trim();
     var email = $('emailInput').value.trim();
+    if (!name) {
+      $('nameError').textContent = 'Please enter your name.';
+      return;
+    }
     if (!isValidEmail(email)) {
       $('emailError').textContent = 'Please enter a valid email address.';
       return;
     }
     if (!$('agreeCheck').checked) return;
 
+    state.viewerName = name;
     state.viewerEmail = email;
     try {
+      localStorage.setItem(STORAGE_KEY_NAME, name);
       localStorage.setItem(STORAGE_KEY_EMAIL, email);
       localStorage.setItem(STORAGE_KEY_AGREED, new Date().toISOString());
     } catch (e) {}
 
-    logAccess(email);
+    logAccess(email, name);
     unlockContent(email);
     toast('Welcome! Enjoy your recordings 🎬', 'success');
   };
@@ -2290,6 +2308,10 @@
     $('pageContainer').classList.remove('locked');
     $('viewerStrip').style.display = 'inline-flex';
     $('viewerEmail').textContent = email;
+    // Restore the saved name for returning students (so state stays consistent)
+    if (!state.viewerName) {
+      try { state.viewerName = localStorage.getItem(STORAGE_KEY_NAME) || null; } catch (e) {}
+    }
   }
 
   /* =====================================================================
