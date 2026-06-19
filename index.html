@@ -409,6 +409,8 @@
 
     /* Agreement block */
     .agree-box {
+      display: block;
+      cursor: pointer;
       border: 1.5px solid var(--border-subtle);
       background: var(--bg-secondary);
       border-radius: var(--radius-md);
@@ -463,6 +465,7 @@
     /* The "$390" fine print — deliberately small, soft, reassuring.
        We do NOT want a student to feel they owe money. */
     .fee-note {
+      display: block;
       margin-top: 10px;
       padding-top: 10px;
       border-top: 1px dashed var(--border-medium);
@@ -1225,20 +1228,20 @@
         <div class="field-error" id="emailError"></div>
       </div>
 
-      <!-- Agreement -->
-      <div class="agree-box" id="agreeBox">
-        <label class="agree-row" for="agreeCheck">
+      <!-- Agreement — the whole box is one label, so a click anywhere ticks the box -->
+      <label class="agree-box" id="agreeBox" for="agreeCheck">
+        <span class="agree-row">
           <span class="agree-check" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
           </span>
           <input type="checkbox" id="agreeCheck" style="position:absolute;opacity:0;width:0;height:0;" />
           <span class="agree-text" id="agreeText">I confirm I have joined and paid for the holiday workshop, and I'm accessing my own recordings.</span>
-        </label>
-        <div class="fee-note" id="feeNote">
+        </span>
+        <span class="fee-note" id="feeNote">
           Good to know: your recordings come free with the workshop you already paid for, so you won't be charged again.
           The recording-only access fee of <span class="fee-amt" id="feeAmtText">$390</span> applies <em>only</em> to people who did not attend the programme.
-        </div>
-      </div>
+        </span>
+      </label>
 
       <button class="btn btn-primary btn-lg btn-full" id="enterBtn" disabled onclick="submitGate()">
         Unlock my recordings
@@ -2263,12 +2266,8 @@
       if (e.key === 'Enter' && !$('enterBtn').disabled) submitGate();
     });
 
-    agreeBox.addEventListener('click', function (e) {
-      // toggle when clicking anywhere in the box except the (hidden) input itself bubbling twice
-      if (e.target.id === 'agreeCheck') return;
-      agreeCheck.checked = !agreeCheck.checked;
-      syncAgree();
-    });
+    // The box is a <label>, so the browser toggles the checkbox on any click
+    // inside it; we just react to the resulting change to update the styling.
     agreeCheck.addEventListener('change', syncAgree);
 
     function syncAgree() {
