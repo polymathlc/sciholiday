@@ -1,0 +1,2465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workshop Recordings &amp; Answer Keys — Polymath Learning Centre</title>
+
+  <!-- Roboto loaded only so the '?' glyph can borrow it (Century Gothic's question mark is ugly) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================
+       0. THE '?' FONT TRICK
+       Century Gothic's question mark is unattractive, so we
+       restrict a Roboto-backed font family to U+003F only and
+       list it FIRST in the body font stack. Every other glyph
+       falls through to Century Gothic.
+       ========================================================= */
+    @font-face {
+      font-family: 'RobotoQuestion';
+      font-style: normal;
+      font-weight: 400;
+      src: local('Roboto'), local('Roboto-Regular'),
+           url(https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2) format('woff2');
+      unicode-range: U+003F;
+    }
+
+    /* =========================================================
+       1. DESIGN TOKENS  (General / warm-amber accent — friendly,
+          welcoming, deliberately NON-alarming because this page
+          mentions money and we never want students to panic.)
+       ========================================================= */
+    :root {
+      /* Surfaces */
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #FAFAF8;
+      --bg-tertiary: #F3F2EE;
+      --border-subtle: #ECEAE4;
+      --border-medium: #D9D6CD;
+
+      /* Text */
+      --text-primary: #1F1D1A;
+      --text-secondary: #5C5A54;
+      --text-tertiary: #8E8B83;
+      --text-inverse: #FFFFFF;
+
+      /* Accent — warm amber (General) */
+      --accent-light: #FFE0B2;
+      --accent-base: #FFB74D;
+      --accent-dark: #F39C2A;
+      --accent-deep: #C9780E;
+      --accent-bg: #FFF7EC;
+
+      /* Supporting hues */
+      --blue-bg: #E8F2FD;
+      --blue-line: #90CAF9;
+      --blue-text: #1565C0;
+      --green-bg: #F0F8EC;
+      --green-line: #AED581;
+      --green-text: #33691E;
+      --rose-bg: #FDEEEE;
+      --rose-line: #F2B8B8;
+      --rose-text: #B23A3A;
+
+      /* Shadows */
+      --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-md: 0 2px 4px rgba(0,0,0,0.05), 0 6px 20px rgba(0,0,0,0.08);
+      --shadow-lg: 0 4px 6px rgba(0,0,0,0.05), 0 10px 30px rgba(0,0,0,0.1);
+      --shadow-xl: 0 10px 24px rgba(0,0,0,0.10), 0 30px 60px rgba(0,0,0,0.14);
+      --shadow-button: 0 1px 2px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-button-hover: 0 2px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.12);
+
+      /* Spacing */
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 40px;
+      --space-2xl: 64px;
+
+      /* Radius */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 22px;
+      --radius-full: 999px;
+
+      /* Type */
+      --font-family: 'RobotoQuestion', 'Century Gothic', CenturyGothic, AppleGothic, 'Trebuchet MS', sans-serif;
+      --font-size-xs: 0.75rem;
+      --font-size-sm: 0.875rem;
+      --font-size-base: 1rem;
+      --font-size-md: 1.125rem;
+      --font-size-lg: 1.5rem;
+      --font-size-xl: 2rem;
+      --font-size-2xl: 2.5rem;
+      --line-tight: 1.2;
+      --line-normal: 1.65;
+
+      /* Transitions */
+      --t-fast: 0.15s ease;
+      --t-base: 0.25s ease;
+      --t-slow: 0.4s ease;
+      --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* =========================================================
+       2. RESET & GLOBAL
+       ========================================================= */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-family);
+      color: var(--text-primary);
+      background:
+        radial-gradient(1200px 600px at 50% -200px, #FFFBF4 0%, var(--bg-secondary) 60%) fixed;
+      line-height: var(--line-normal);
+      min-height: 100vh;
+    }
+
+    img { max-width: 100%; display: block; }
+    input, button, select, textarea { font-family: inherit; }
+    a { color: var(--accent-deep); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    ::selection { background: var(--accent-light); color: var(--text-primary); }
+
+    /* =========================================================
+       3. HEADER
+       ========================================================= */
+    .polymath-header {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-md);
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(255,255,255,0.86);
+      backdrop-filter: saturate(120%) blur(8px);
+      -webkit-backdrop-filter: saturate(120%) blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .polymath-logo {
+      height: 56px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .header-actions {
+      position: absolute;
+      right: var(--space-lg);
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .header-left {
+      position: absolute;
+      left: var(--space-lg);
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .icon-btn {
+      background: none;
+      border: 1.5px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--t-base);
+    }
+    .icon-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--accent-base);
+      background: var(--accent-bg);
+      box-shadow: var(--shadow-button);
+      transform: translateY(-1px);
+    }
+    .icon-btn svg {
+      width: 20px; height: 20px;
+      stroke: currentColor; fill: none;
+      stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    .admin-pill {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent-deep);
+      background: var(--accent-bg);
+      border: 1px solid var(--accent-light);
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+    }
+    .admin-pill .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent-base);
+      box-shadow: 0 0 0 3px rgba(255,183,77,0.25);
+    }
+
+    /* =========================================================
+       4. BUTTONS
+       ========================================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      padding: 12px 26px;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      font-family: var(--font-family);
+      cursor: pointer;
+      border: none;
+      transition: all var(--t-base);
+      user-select: none;
+      outline: none;
+      white-space: nowrap;
+    }
+    .btn:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+
+    .btn-primary {
+      background: var(--accent-base);
+      color: #3a2a08;
+      box-shadow: var(--shadow-button);
+    }
+    .btn-primary:hover {
+      background: var(--accent-dark);
+      box-shadow: var(--shadow-button-hover);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active { transform: translateY(0.5px); box-shadow: var(--shadow-xs); }
+    .btn-primary:disabled {
+      background: var(--bg-tertiary);
+      color: var(--text-tertiary);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 1.5px solid var(--border-medium);
+      box-shadow: var(--shadow-xs);
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent-base);
+      background: var(--accent-bg);
+      box-shadow: var(--shadow-button);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 9px 16px;
+    }
+    .btn-ghost:hover { color: var(--text-primary); background: var(--bg-tertiary); }
+
+    .btn-danger {
+      background: var(--rose-bg);
+      color: var(--rose-text);
+      border: 1.5px solid var(--rose-line);
+    }
+    .btn-danger:hover { background: #fbe2e2; transform: translateY(-1px); }
+
+    .btn-sm { padding: 8px 18px; font-size: var(--font-size-sm); }
+    .btn-lg { padding: 16px 36px; font-size: var(--font-size-md); }
+    .btn-full { width: 100%; }
+
+    .btn-google {
+      background: #fff;
+      color: #3c4043;
+      border: 1.5px solid #dadce0;
+      box-shadow: var(--shadow-xs);
+    }
+    .btn-google:hover { box-shadow: var(--shadow-button); transform: translateY(-1px); }
+    .btn-google svg { width: 18px; height: 18px; }
+
+    /* =========================================================
+       5. GATE (email + agreement)  — full-screen overlay
+       ========================================================= */
+    .gate {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      background:
+        radial-gradient(900px 500px at 50% -150px, #FFF4E2 0%, rgba(250,250,248,0.96) 55%),
+        rgba(250,250,248,0.96);
+      overflow-y: auto;
+    }
+    .gate.hidden { display: none; }
+
+    .gate-card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      padding: var(--space-xl);
+      animation: scaleIn 0.5s var(--spring) both;
+      margin: auto;
+    }
+
+    .gate-logo {
+      height: 48px;
+      margin: 0 auto var(--space-lg);
+    }
+
+    .gate-eyebrow {
+      text-align: center;
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-deep);
+      margin-bottom: var(--space-sm);
+    }
+
+    .gate-title {
+      text-align: center;
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.25;
+      margin-bottom: var(--space-sm);
+    }
+
+    .gate-sub {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: var(--font-size-base);
+      line-height: 1.6;
+      margin-bottom: var(--space-lg);
+    }
+
+    .reassure {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--green-bg);
+      border: 1px solid var(--green-line);
+      color: var(--green-text);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: var(--font-size-sm);
+      line-height: 1.55;
+      margin-bottom: var(--space-lg);
+    }
+    .reassure svg { flex-shrink: 0; width: 18px; height: 18px; margin-top: 1px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+    .field { margin-bottom: var(--space-md); }
+    .field-label {
+      display: block;
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .text-input {
+      width: 100%;
+      padding: 13px 15px;
+      border: 1.5px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      transition: all var(--t-fast);
+      outline: none;
+    }
+    .text-input:focus {
+      border-color: var(--accent-base);
+      box-shadow: 0 0 0 3px rgba(255,183,77,0.18);
+    }
+    .text-input::placeholder { color: var(--text-tertiary); }
+
+    .field-error {
+      color: var(--rose-text);
+      font-size: var(--font-size-xs);
+      margin-top: 6px;
+      min-height: 1em;
+    }
+
+    /* Agreement block */
+    .agree-box {
+      border: 1.5px solid var(--border-subtle);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: var(--space-md);
+      transition: all var(--t-base);
+    }
+    .agree-box.checked {
+      border-color: var(--accent-base);
+      background: var(--accent-bg);
+    }
+
+    .agree-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .agree-check {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      border: 2px solid var(--border-medium);
+      background: var(--bg-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--t-base);
+      margin-top: 1px;
+    }
+    .agree-box.checked .agree-check {
+      background: var(--accent-base);
+      border-color: var(--accent-base);
+    }
+    .agree-check svg {
+      width: 15px; height: 15px;
+      stroke: #3a2a08; fill: none; stroke-width: 3;
+      stroke-linecap: round; stroke-linejoin: round;
+      stroke-dasharray: 24; stroke-dashoffset: 24;
+      transition: stroke-dashoffset 0.3s ease 0.05s;
+    }
+    .agree-box.checked .agree-check svg { stroke-dashoffset: 0; }
+
+    .agree-text {
+      font-size: var(--font-size-sm);
+      color: var(--text-primary);
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    /* The "$390" fine print — deliberately small, soft, reassuring.
+       We do NOT want a student to feel they owe money. */
+    .fee-note {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border-medium);
+      font-size: 0.74rem;
+      line-height: 1.5;
+      color: var(--text-tertiary);
+    }
+    .fee-note .fee-amt {
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 0.74rem;
+      white-space: nowrap;
+    }
+
+    .gate-foot {
+      margin-top: var(--space-lg);
+      text-align: center;
+      font-size: var(--font-size-xs);
+      color: var(--text-tertiary);
+    }
+    .link-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--accent-deep); font-weight: 600;
+      font-family: var(--font-family); font-size: inherit;
+      text-decoration: underline; padding: 0;
+    }
+    .link-btn:hover { color: var(--accent-dark); }
+
+    /* =========================================================
+       6. MAIN CONTENT
+       ========================================================= */
+    .page-container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: var(--space-xl) var(--space-lg) var(--space-2xl);
+    }
+    .page-container.locked { filter: blur(6px); pointer-events: none; user-select: none; }
+
+    .hero {
+      text-align: center;
+      margin-bottom: var(--space-xl);
+    }
+    .hero-eyebrow {
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-deep);
+      margin-bottom: var(--space-sm);
+    }
+    .page-title {
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      margin-bottom: var(--space-sm);
+    }
+    .page-subtitle {
+      font-size: var(--font-size-md);
+      font-weight: 400;
+      color: var(--text-secondary);
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .viewer-strip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: var(--space-md);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      padding: 7px 16px;
+    }
+    .viewer-strip svg { width: 15px; height: 15px; stroke: var(--accent-dark); fill: none; stroke-width: 2; }
+    .viewer-strip strong { color: var(--text-primary); font-weight: 600; }
+
+    /* ---- Generic block frame ---- */
+    .block {
+      position: relative;
+      margin: var(--space-lg) auto;
+      animation: fadeInUp 0.5s ease both;
+    }
+
+    /* ---- Heading block ---- */
+    .block-heading h2 {
+      font-size: var(--font-size-lg);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: var(--text-primary);
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--accent-light);
+      margin-top: var(--space-lg);
+    }
+    .block-heading.level-2 h2 {
+      font-size: var(--font-size-md);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    /* ---- Text block ---- */
+    .block-text .text-body {
+      font-size: var(--font-size-md);
+      color: var(--text-secondary);
+      line-height: 1.8;
+      max-width: 680px;
+    }
+    .block-text .text-body p { margin-bottom: 0.9em; }
+    .block-text .text-body ul,
+    .block-text .text-body ol { margin: 0.5em 0 0.9em 1.3em; }
+    .block-text .text-body li { margin-bottom: 0.35em; }
+    .block-text .text-body strong { color: var(--text-primary); }
+    .block-text .text-body a { text-decoration: underline; }
+
+    /* ---- Video block ---- */
+    .video-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow var(--t-base), transform var(--t-base);
+    }
+    .video-card:hover { box-shadow: var(--shadow-md); }
+
+    .video-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .prov-badge {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-radius: var(--radius-full);
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+    }
+    .prov-badge.dropbox { background: #E8F1FE; color: #0A5FD6; }
+    .prov-badge.drive   { background: #E9F6EC; color: #1E8E3E; }
+    .prov-badge.zoom    { background: #E7F0FF; color: #2D6CDF; }
+    .prov-badge.youtube { background: #FCE8E6; color: #C5221F; }
+    .prov-badge.vimeo   { background: #E4F4FB; color: #138ABD; }
+    .prov-badge.link    { background: var(--bg-tertiary); color: var(--text-secondary); }
+    .prov-badge svg { width: 13px; height: 13px; }
+
+    .video-title {
+      font-size: var(--font-size-base);
+      font-weight: 700;
+      color: var(--text-primary);
+      flex: 1;
+      min-width: 0;
+    }
+
+    .video-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #0e0e0e;
+    }
+    .video-frame iframe,
+    .video-frame video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #0e0e0e;
+    }
+
+    .video-note {
+      padding: 12px 18px;
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-subtle);
+      line-height: 1.55;
+    }
+
+    /* Non-embeddable (Zoom / unknown) — show as a launch card */
+    .video-launch {
+      padding: var(--space-xl) var(--space-lg);
+      text-align: center;
+      background:
+        radial-gradient(500px 220px at 50% -40px, var(--accent-bg) 0%, transparent 70%),
+        var(--bg-primary);
+    }
+    .launch-icon {
+      width: 64px; height: 64px;
+      margin: 0 auto var(--space-md);
+      border-radius: 18px;
+      background: var(--accent-bg);
+      border: 1px solid var(--accent-light);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .launch-icon svg { width: 30px; height: 30px; stroke: var(--accent-deep); fill: none; stroke-width: 1.8; }
+    .launch-msg {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      max-width: 380px;
+      margin: 0 auto var(--space-md);
+      line-height: 1.6;
+    }
+    .passcode-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: var(--font-size-sm);
+      background: var(--bg-secondary);
+      border: 1px dashed var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+      margin-top: var(--space-md);
+      color: var(--text-secondary);
+    }
+    .passcode-chip code {
+      font-family: 'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 0.06em;
+      background: var(--accent-bg);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* ---- Answer key block ---- */
+    .ak-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--accent-base);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .ak-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+    }
+    .ak-icon {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: var(--accent-bg);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ak-icon svg { width: 22px; height: 22px; stroke: var(--accent-deep); fill: none; stroke-width: 1.8; }
+    .ak-meta { flex: 1; min-width: 0; }
+    .ak-label {
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-deep);
+    }
+    .ak-title {
+      font-size: var(--font-size-base);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .ak-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+    .ak-preview {
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-secondary);
+      padding: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--t-slow);
+    }
+    .ak-preview.open { max-height: 640px; }
+    .ak-preview-inner { height: 600px; }
+    .ak-preview-inner iframe {
+      width: 100%; height: 100%; border: 0; background: #fff;
+    }
+    .ak-preview-img { padding: var(--space-md); }
+    .ak-preview-img img { width: 100%; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
+    .ak-note {
+      padding: 0 18px 14px;
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* ---- Image block ---- */
+    .img-block figure {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .img-block img { width: 100%; }
+    .img-block figcaption {
+      padding: 12px 16px;
+      font-size: var(--font-size-sm);
+      color: var(--text-tertiary);
+      text-align: center;
+    }
+
+    /* ---- Divider block ---- */
+    .divider-block {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--text-tertiary);
+      margin: var(--space-xl) auto;
+    }
+    .divider-block::before,
+    .divider-block::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+    .divider-block span { font-size: 1.1rem; opacity: 0.6; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-2xl) var(--space-lg);
+      color: var(--text-tertiary);
+    }
+    .empty-state .es-icon {
+      width: 72px; height: 72px;
+      margin: 0 auto var(--space-md);
+      border-radius: 20px;
+      background: var(--bg-tertiary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .empty-state .es-icon svg { width: 34px; height: 34px; stroke: var(--text-tertiary); fill: none; stroke-width: 1.6; }
+    .empty-state h3 { color: var(--text-secondary); font-weight: 600; margin-bottom: 6px; }
+
+    /* =========================================================
+       7. ADMIN — block controls, add bar, editor modal
+       ========================================================= */
+    .block-controls {
+      display: none;
+      position: absolute;
+      top: -14px;
+      right: 0;
+      gap: 4px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-md);
+      padding: 4px;
+      z-index: 5;
+    }
+    body.is-admin .block-controls { display: inline-flex; }
+    body.is-admin .block {
+      padding: 6px;
+      border: 1px dashed transparent;
+      border-radius: var(--radius-lg);
+      transition: border-color var(--t-base), background var(--t-base);
+    }
+    body.is-admin .block:hover {
+      border-color: var(--accent-light);
+      background: rgba(255,247,236,0.4);
+    }
+    .ctrl-btn {
+      width: 30px; height: 30px;
+      border: none; border-radius: 50%;
+      background: transparent;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all var(--t-fast);
+    }
+    .ctrl-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+    .ctrl-btn.danger:hover { background: var(--rose-bg); color: var(--rose-text); }
+    .ctrl-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .ctrl-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .add-bar {
+      display: none;
+      position: sticky;
+      bottom: 0;
+      z-index: 35;
+      margin-top: var(--space-xl);
+      padding: var(--space-md);
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      box-shadow: 0 -6px 24px rgba(0,0,0,0.06);
+    }
+    body.is-admin .add-bar { display: block; }
+    .add-bar-inner {
+      max-width: 880px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+    .add-bar-label {
+      width: 100%;
+      text-align: center;
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+    .add-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border-medium);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--t-base);
+    }
+    .add-chip:hover {
+      border-color: var(--accent-base);
+      background: var(--accent-bg);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-button);
+    }
+    .add-chip svg { width: 16px; height: 16px; stroke: var(--accent-deep); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      background: rgba(31,29,26,0.45);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      overflow-y: auto;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      width: 100%;
+      max-width: 560px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      animation: scaleIn 0.35s var(--spring) both;
+      margin: auto;
+      max-height: calc(100vh - 48px);
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-lg) var(--space-lg) var(--space-md);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .modal-title { font-size: var(--font-size-md); font-weight: 700; }
+    .modal-close {
+      width: 34px; height: 34px; border: none; border-radius: 50%;
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      cursor: pointer; font-size: 1.2rem; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--t-fast);
+    }
+    .modal-close:hover { background: var(--rose-bg); color: var(--rose-text); }
+    .modal-body {
+      padding: var(--space-lg);
+      overflow-y: auto;
+    }
+    .modal-foot {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: var(--space-md) var(--space-lg) var(--space-lg);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .form-help {
+      font-size: var(--font-size-xs);
+      color: var(--text-tertiary);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+    textarea.text-input { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+    .seg {
+      display: inline-flex;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
+      padding: 3px;
+      gap: 3px;
+    }
+    .seg button {
+      border: none; background: transparent; cursor: pointer;
+      padding: 7px 14px; border-radius: 7px;
+      font-size: var(--font-size-sm); font-weight: 600;
+      color: var(--text-secondary); font-family: var(--font-family);
+      transition: all var(--t-fast);
+    }
+    .seg button.active { background: var(--bg-primary); color: var(--text-primary); box-shadow: var(--shadow-xs); }
+
+    /* Rich text mini-toolbar (for the text block editor) */
+    .rt-toolbar {
+      display: flex;
+      gap: 4px;
+      padding: 6px;
+      border: 1.5px solid var(--border-medium);
+      border-bottom: none;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      background: var(--bg-secondary);
+    }
+    .rt-toolbar button {
+      width: 34px; height: 32px; border: none; border-radius: 6px;
+      background: transparent; cursor: pointer; color: var(--text-secondary);
+      font-weight: 700; font-size: 0.95rem;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all var(--t-fast);
+    }
+    .rt-toolbar button:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+    .rt-editor {
+      min-height: 140px;
+      max-height: 320px;
+      overflow-y: auto;
+      border: 1.5px solid var(--border-medium);
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+      padding: 12px 14px;
+      font-size: var(--font-size-base);
+      line-height: 1.7;
+      outline: none;
+      background: var(--bg-primary);
+    }
+    .rt-editor:focus { border-color: var(--accent-base); }
+    .rt-editor:empty::before {
+      content: attr(data-placeholder);
+      color: var(--text-tertiary);
+    }
+    .rt-editor ul, .rt-editor ol { margin-left: 1.3em; }
+
+    /* Upload dropzone */
+    .dropzone {
+      border: 2px dashed var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--t-base);
+      color: var(--text-tertiary);
+    }
+    .dropzone:hover, .dropzone.drag {
+      border-color: var(--accent-base);
+      background: var(--accent-bg);
+      color: var(--accent-deep);
+    }
+    .dropzone svg { width: 30px; height: 30px; margin: 0 auto 8px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+    .dz-preview { margin-top: 12px; }
+    .dz-preview img { max-height: 160px; margin: 0 auto; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
+
+    .upload-spin {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 10px;
+      font-size: var(--font-size-sm);
+      color: var(--accent-deep);
+    }
+    .upload-spin.show { display: flex; }
+    .mini-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid var(--accent-light);
+      border-top-color: var(--accent-dark);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* =========================================================
+       8. TOAST
+       ========================================================= */
+    .toast-wrap {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      pointer-events: none;
+    }
+    .toast {
+      background: var(--text-primary);
+      color: #fff;
+      padding: 11px 18px;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      display: flex; align-items: center; gap: 9px;
+      animation: toastIn 0.3s var(--spring) both;
+      max-width: 90vw;
+    }
+    .toast.success { background: #2E7D32; }
+    .toast.error { background: #C0392B; }
+    .toast svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+
+    /* =========================================================
+       9. VERSION BADGE — visible only to admin (admin system present)
+       ========================================================= */
+    .version-badge {
+      position: fixed;
+      left: 12px;
+      bottom: 10px;
+      z-index: 30;
+      font-size: 0.66rem;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      background: rgba(255,255,255,0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      padding: 3px 10px;
+      display: none;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+    }
+    body.is-admin .version-badge { display: inline-block; }
+
+    /* Full-screen loader */
+    .boot {
+      position: fixed; inset: 0; z-index: 90;
+      background: var(--bg-secondary);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px;
+      transition: opacity 0.4s ease;
+    }
+    .boot.hide { opacity: 0; pointer-events: none; }
+    .boot .mini-spinner { width: 30px; height: 30px; border-width: 3px; }
+    .boot p { color: var(--text-tertiary); font-size: var(--font-size-sm); }
+
+    /* =========================================================
+       10. ANIMATIONS
+       ========================================================= */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(14px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    .animate-in { animation: fadeInUp 0.5s ease-out both; }
+    .stagger > *:nth-child(1) { animation-delay: 0.03s; }
+    .stagger > *:nth-child(2) { animation-delay: 0.09s; }
+    .stagger > *:nth-child(3) { animation-delay: 0.15s; }
+    .stagger > *:nth-child(4) { animation-delay: 0.21s; }
+    .stagger > *:nth-child(5) { animation-delay: 0.27s; }
+    .stagger > *:nth-child(6) { animation-delay: 0.33s; }
+    .stagger > *:nth-child(7) { animation-delay: 0.39s; }
+    .stagger > *:nth-child(8) { animation-delay: 0.45s; }
+
+    /* =========================================================
+       11. RESPONSIVE
+       ========================================================= */
+    @media (max-width: 640px) {
+      .polymath-logo { height: 44px; }
+      .header-left { left: 10px; }
+      .header-actions { right: 10px; }
+      .header-actions .btn span.hide-sm { display: none; }
+      .gate-card { padding: var(--space-lg); }
+      .page-title { font-size: 1.6rem; }
+      .page-container { padding: var(--space-lg) var(--space-md) var(--space-2xl); }
+      .ak-head { flex-wrap: wrap; }
+      .ak-actions { width: 100%; }
+      .ak-actions .btn { flex: 1; }
+      .block-controls { top: -12px; }
+    }
+
+    /* =========================================================
+       12. PRINT  (clean worksheet view)
+       ========================================================= */
+    @media print {
+      @page { size: A4; margin: 15mm 18mm; }
+      .gate, .add-bar, .block-controls, .header-actions, .header-left,
+      .version-badge, .toast-wrap, .modal-overlay, .icon-btn, .boot,
+      .viewer-strip { display: none !important; }
+
+      body { background: #fff !important; color: #1A1A1A !important; font-size: 11pt; }
+      .page-container { max-width: 100% !important; padding: 0 !important; filter: none !important; }
+      .polymath-header { position: static; border-bottom: 1px solid #ccc !important; box-shadow: none !important; backdrop-filter: none !important; }
+      .polymath-logo { height: 44px !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+
+      .video-card, .ak-card, .img-block figure, .video-launch {
+        box-shadow: none !important; border: 1px solid #ccc !important;
+        page-break-inside: avoid;
+      }
+      .video-frame { display: none !important; }
+      .video-card::after {
+        content: '▶  Video recording — open the portal online to watch.';
+        display: block; padding: 14px 18px; font-size: 10pt; color: #555;
+        border-top: 1px dashed #ccc;
+      }
+      .ak-preview { max-height: none !important; }
+      .block { animation: none !important; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== BOOT LOADER ===== -->
+  <div class="boot" id="bootLoader">
+    <div class="mini-spinner"></div>
+    <p>Loading your recordings…</p>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="polymath-header">
+    <div class="header-left">
+      <span class="admin-pill" id="adminPill"><span class="dot"></span> Admin mode</span>
+    </div>
+
+    <img src="https://dl.dropboxusercontent.com/scl/fi/h40yjlyg8ldefwfaa3dib/polymath-logo-sticker.png?rlkey=o1ra4taqy79gt9t8u096v82zj"
+         alt="Polymath Learning Centre" class="polymath-logo" />
+
+    <div class="header-actions">
+      <button class="icon-btn" onclick="window.print()" title="Print / Save as PDF" aria-label="Print">
+        <svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      </button>
+      <button class="btn btn-secondary btn-sm" id="adminBtn" onclick="onAdminButton()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="hide-sm" id="adminBtnLabel">Admin</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== GATE (email + agreement) ===== -->
+  <div class="gate" id="gate">
+    <div class="gate-card">
+      <img src="https://dl.dropboxusercontent.com/scl/fi/h40yjlyg8ldefwfaa3dib/polymath-logo-sticker.png?rlkey=o1ra4taqy79gt9t8u096v82zj"
+           alt="Polymath" class="gate-logo" />
+      <div class="gate-eyebrow" id="gateEyebrow">June Holiday Workshop</div>
+      <h1 class="gate-title" id="gateTitle">Your Recordings &amp; Answer Keys</h1>
+      <p class="gate-sub" id="gateSub">Enter the email you signed up with to unlock the lesson videos and answer keys from the programme.</p>
+
+      <div class="reassure">
+        <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+        <div id="reassureText">Already attended? These recordings are <strong>included free</strong> with your workshop — there is nothing more to pay.</div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="emailInput">Your email address</label>
+        <input type="email" id="emailInput" class="text-input" placeholder="you@example.com"
+               autocomplete="email" inputmode="email" />
+        <div class="field-error" id="emailError"></div>
+      </div>
+
+      <!-- Agreement -->
+      <div class="agree-box" id="agreeBox">
+        <label class="agree-row" for="agreeCheck">
+          <span class="agree-check" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+          </span>
+          <input type="checkbox" id="agreeCheck" style="position:absolute;opacity:0;width:0;height:0;" />
+          <span class="agree-text" id="agreeText">I confirm I have joined and paid for the holiday workshop, and I'm accessing my own recordings.</span>
+        </label>
+        <div class="fee-note" id="feeNote">
+          Good to know: your recordings come free with the workshop you already paid for, so you won't be charged again.
+          The recording-only access fee of <span class="fee-amt" id="feeAmtText">$390</span> applies <em>only</em> to people who did not attend the programme.
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-lg btn-full" id="enterBtn" disabled onclick="submitGate()">
+        Unlock my recordings
+      </button>
+
+      <div class="gate-foot">
+        Having trouble? WhatsApp Polymath Learning Centre and we'll help you in.<br/>
+        <button class="link-btn" onclick="onAdminButton()" style="margin-top:8px;">I'm the teacher — sign in to edit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="page-container locked" id="pageContainer">
+    <section class="hero">
+      <div class="hero-eyebrow" id="heroEyebrow">June Holiday Workshop</div>
+      <h1 class="page-title" id="heroTitle">Recordings &amp; Answer Keys</h1>
+      <p class="page-subtitle" id="heroSubtitle">Re-watch every lesson and check your work against the official answer keys, anytime.</p>
+      <div class="viewer-strip" id="viewerStrip" style="display:none;">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        <span>Signed in as <strong id="viewerEmail">—</strong></span>
+      </div>
+    </section>
+
+    <div id="contentArea" class="stagger"><!-- blocks injected here --></div>
+  </main>
+
+  <!-- ===== ADMIN ADD BAR ===== -->
+  <div class="add-bar" id="addBar">
+    <div class="add-bar-inner">
+      <div class="add-bar-label">Add a content block</div>
+      <button class="add-chip" onclick="openEditor('heading')"><svg viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h10"/></svg> Heading</button>
+      <button class="add-chip" onclick="openEditor('text')"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg> Text</button>
+      <button class="add-chip" onclick="openEditor('video')"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg> Video</button>
+      <button class="add-chip" onclick="openEditor('answerkey')"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg> Answer key</button>
+      <button class="add-chip" onclick="openEditor('image')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg> Image</button>
+      <button class="add-chip" onclick="openEditor('divider')"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg> Divider</button>
+      <button class="add-chip" onclick="openSettings()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg> Page settings</button>
+    </div>
+  </div>
+
+  <!-- ===== EDITOR MODAL ===== -->
+  <div class="modal-overlay" id="editorOverlay">
+    <div class="modal">
+      <div class="modal-head">
+        <span class="modal-title" id="editorTitle">Add block</span>
+        <button class="modal-close" onclick="closeEditor()" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body" id="editorBody"><!-- dynamic form --></div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="closeEditor()">Cancel</button>
+        <button class="btn btn-primary" id="editorSave" onclick="saveEditor()">Save block</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS MODAL ===== -->
+  <div class="modal-overlay" id="settingsOverlay">
+    <div class="modal">
+      <div class="modal-head">
+        <span class="modal-title">Page settings</span>
+        <button class="modal-close" onclick="closeSettings()" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label class="field-label">Eyebrow label (small text above title)</label>
+          <input type="text" class="text-input" id="setEyebrow" placeholder="June Holiday Workshop" />
+        </div>
+        <div class="field">
+          <label class="field-label">Page title</label>
+          <input type="text" class="text-input" id="setTitle" placeholder="Recordings &amp; Answer Keys" />
+        </div>
+        <div class="field">
+          <label class="field-label">Subtitle</label>
+          <textarea class="text-input" id="setSubtitle" rows="2"></textarea>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--border-subtle);margin:18px 0;" />
+        <div class="field">
+          <label class="field-label">Reassurance line (green box on the entry screen)</label>
+          <textarea class="text-input" id="setReassure" rows="2"></textarea>
+          <p class="form-help">Keep this warm — it stops students worrying they owe money.</p>
+        </div>
+        <div class="field">
+          <label class="field-label">Agreement wording (the checkbox)</label>
+          <textarea class="text-input" id="setAgree" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label class="field-label">Recording-only access fee</label>
+          <input type="text" class="text-input" id="setFee" placeholder="$390" />
+          <p class="form-help">Shown small &amp; gently in the fine print. Only applies to non-attendees.</p>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="closeSettings()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveSettings()">Save settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOASTS ===== -->
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <!-- ===== VERSION BADGE (admin only) ===== -->
+  <div class="version-badge" id="versionBadge">Polymath Recordings Portal · v1.1</div>
+
+  <!-- ===== FIREBASE ===== -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
+  <script>
+  /* =====================================================================
+     POLYMATH — WORKSHOP RECORDINGS & ANSWER KEYS PORTAL
+     Single-file webapp. Students enter their email + agree to the
+     participation terms, then view embedded recordings (Dropbox / Drive /
+     Zoom) and answer keys. The teacher (admin) signs in with Google to
+     add, edit, reorder and delete content blocks.
+     ===================================================================== */
+
+  'use strict';
+
+  /* ---------- Constants ---------- */
+  var APP_VERSION = '1.1';
+  var APP_DOC_ID = 'holiday_recordings_portal';
+  var ADMIN_EMAIL = 'chungzhikai@gmail.com';
+  var STORAGE_KEY_EMAIL = 'polymath_portal_verified_email';
+  var STORAGE_KEY_AGREED = 'polymath_portal_agreed_at';
+
+  /* ---------- Firebase init ---------- */
+  var firebaseConfig = {
+    apiKey: "AIzaSyAUSI3Uh28IeqASEp0JhH4QPaVt-O3meBo",
+    authDomain: "mathgen--app.firebaseapp.com",
+    projectId: "mathgen--app",
+    storageBucket: "mathgen--app.firebasestorage.app",
+    messagingSenderId: "165654161198",
+    appId: "1:165654161198:web:16c8bd60eb3a2aa7edbcbf",
+    measurementId: "G-0MWZFG211D"
+  };
+  firebase.initializeApp(firebaseConfig);
+  var db = firebase.firestore();
+  var auth = firebase.auth();
+  var storage = firebase.storage();
+  var FieldValue = firebase.firestore.FieldValue;
+
+  /* ---------- App state ---------- */
+  var state = {
+    isAdmin: false,
+    viewerEmail: null,
+    blocks: [],
+    settings: defaultSettings(),
+    editingId: null,        // id of block being edited (null = new)
+    editingType: null,      // type of block in the editor
+    pendingUpload: null     // { url } captured by the editor's uploader
+  };
+
+  function defaultSettings() {
+    return {
+      eyebrow: 'June Holiday Workshop',
+      title: 'Recordings & Answer Keys',
+      subtitle: 'Re-watch every lesson and check your work against the official answer keys, anytime.',
+      reassure: 'Already attended? These recordings are <strong>included free</strong> with your workshop — there is nothing more to pay.',
+      agreeText: "I confirm I have joined and paid for the holiday workshop, and I'm accessing my own recordings.",
+      fee: '$390'
+    };
+  }
+
+  /* ---------- Seed content ----------
+     The June 2026 PSLE Science Holiday Workshop booklets. These show by
+     default for everyone; once the teacher signs in and edits anything,
+     the saved Firestore copy takes over from here. */
+  var SEED_BLOCKS = [
+    { id: 'seed_b1_head', type: 'heading', text: 'Booklet 1', level: 1 },
+    {
+      id: 'seed_b1_day1', type: 'video',
+      title: 'Booklet 1 — Day 1',
+      url: 'https://www.dropbox.com/scl/fi/01m1w4n7ymbekgofgzl87/June-2026-PSLE-Science-Holiday-Workshop-Booklet-1-Day-1.mp4?rlkey=fhigi5u67f1m0cfhn7zncpwwu&dl=0',
+      passcode: '', note: ''
+    },
+    {
+      id: 'seed_b1_day2', type: 'video',
+      title: 'Booklet 1 — Day 2',
+      url: 'https://www.dropbox.com/scl/fi/ntei5nab8rg3egb7txbf2/June-2026-PSLE-Science-Holiday-Workshop-Booklet-1-Day-2.mp4?rlkey=v0fvnvh6mbki1j76t2b0valiy&dl=0',
+      passcode: '', note: ''
+    },
+    {
+      id: 'seed_b1_ans', type: 'answerkey',
+      title: 'Booklet 1 — Answer Key (Mistakes Analysis)',
+      url: 'https://www.dropbox.com/scl/fi/hug77nqde09o6v8qmezu1/Ans-Key-PSLE-Science-June-Holiday-Workshop-Mistakes-Analysis.pdf?rlkey=44p3fbw0hyiw3v12nv9ze6lzt&dl=0',
+      imageUrl: '', note: 'Mark your own work first, then check against the answer key.'
+    },
+    { id: 'seed_div_1', type: 'divider' },
+    { id: 'seed_b2_head', type: 'heading', text: 'Booklet 2', level: 1 },
+    {
+      id: 'seed_b2_vid', type: 'video',
+      title: 'Booklet 2 — Full Recording',
+      url: 'https://www.dropbox.com/scl/fi/wwds9wdr07vowd7eo6oxy/GMT20260607-065516_Recording_1920x1440.mp4?rlkey=zs5jf2h9iikq2xjh0ypb536xm&dl=0',
+      passcode: '', note: ''
+    },
+    {
+      id: 'seed_b2_ans', type: 'answerkey',
+      title: 'Booklet 2 — Answer Key (P6 Science)',
+      url: 'https://www.dropbox.com/scl/fi/sjgaxhg140yszbnpdhgpj/Ans-Key-2026-P6-Science-June-Workshop.pdf?rlkey=uw13hxnzzq7tc1hywtweryd6l&dl=0',
+      imageUrl: '', note: 'Mark your own work first, then check against the answer key.'
+    }
+  ];
+
+  /* =====================================================================
+     UTILITIES
+     ===================================================================== */
+  function $(id) { return document.getElementById(id); }
+
+  function uid() {
+    return 'b_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+  }
+
+  function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
+  }
+
+  /* Light sanitiser for admin-authored rich text (only the trusted teacher
+     writes this, but we still strip scripts/handlers as a safety net). */
+  function sanitizeRich(html) {
+    if (!html) return '';
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    tmp.querySelectorAll('script, style, iframe, object, embed').forEach(function (n) { n.remove(); });
+    tmp.querySelectorAll('*').forEach(function (el) {
+      // remove on* handlers and javascript: hrefs
+      Array.prototype.slice.call(el.attributes).forEach(function (attr) {
+        var name = attr.name.toLowerCase();
+        if (name.indexOf('on') === 0) el.removeAttribute(attr.name);
+        if ((name === 'href' || name === 'src') && /^\s*javascript:/i.test(attr.value)) {
+          el.removeAttribute(attr.name);
+        }
+      });
+    });
+    return tmp.innerHTML;
+  }
+
+  function toast(message, kind) {
+    var wrap = $('toastWrap');
+    var el = document.createElement('div');
+    el.className = 'toast' + (kind ? ' ' + kind : '');
+    var icon = '';
+    if (kind === 'success') icon = '<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';
+    else if (kind === 'error') icon = '<svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+    el.innerHTML = icon + '<span>' + escapeHtml(message) + '</span>';
+    wrap.appendChild(el);
+    setTimeout(function () {
+      el.style.transition = 'opacity .3s ease, transform .3s ease';
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(10px)';
+      setTimeout(function () { el.remove(); }, 320);
+    }, 2600);
+  }
+
+  /* =====================================================================
+     VIDEO PROVIDER DETECTION & EMBED BUILDING
+     ===================================================================== */
+  function detectProvider(url) {
+    var u = String(url || '').trim();
+    if (!u) return 'link';
+    if (/dropbox\.com|dropboxusercontent\.com/i.test(u)) return 'dropbox';
+    if (/drive\.google\.com|docs\.google\.com/i.test(u)) return 'drive';
+    if (/zoom\.us|zoom\.com/i.test(u)) return 'zoom';
+    if (/youtube\.com|youtu\.be/i.test(u)) return 'youtube';
+    if (/vimeo\.com/i.test(u)) return 'vimeo';
+    return 'link';
+  }
+
+  function providerLabel(p) {
+    return ({
+      dropbox: 'Dropbox', drive: 'Google Drive', zoom: 'Zoom',
+      youtube: 'YouTube', vimeo: 'Vimeo', link: 'Recording'
+    })[p] || 'Recording';
+  }
+
+  function providerIcon(p) {
+    var icons = {
+      dropbox: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2l6 4-6 4-6-4 6-4zm12 0l6 4-6 4-6-4 6-4zM0 14l6-4 6 4-6 4-6-4zm18-4l6 4-6 4-6-4 6-4zM6 19l6-4 6 4-6 4-6-4z"/></svg>',
+      drive:   '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.7 3l8.6 0 4.3 7.5-4.3 7.5H7.7L3.4 10.5z" opacity=".0"/><path d="M8.4 3l7.2 12.5H22L14.8 3zM2 16.5L5.6 10l3.6 6.2L5.6 22.7zM7 17.5h10l-3.4 5.5H10.4z"/></svg>',
+      zoom:    '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="6" width="14" height="12" rx="3"/><path d="M22 8l-5 4 5 4z"/></svg>',
+      youtube: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 7.5a3 3 0 00-2.1-2.1C19 5 12 5 12 5s-7 0-8.9.4A3 3 0 001 7.5 31 31 0 001 12a31 31 0 00.1 4.5 3 3 0 002.1 2.1C5 19 12 19 12 19s7 0 8.9-.4a3 3 0 002.1-2.1A31 31 0 0023 12a31 31 0 00-.1-4.5zM10 15V9l5 3z"/></svg>',
+      vimeo:   '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 7c-.1 2-1.5 4.8-4.2 8.4C15 19.2 12.7 21 10.8 21c-1.2 0-2.2-1.1-3-3.3l-1.6-6C5.5 9.5 5 8.8 4.5 8.8c-.1 0-.6.3-1.4.9L2 8.4c1-.9 2-1.8 3-2.7C6.3 4.6 7.3 4 8 4c1.6-.2 2.6 1 3 3.4.4 2.7.7 4.3.9 5 .6 2.5 1.2 3.7 1.9 3.7.5 0 1.3-.8 2.4-2.5 1-1.6 1.6-2.8 1.7-3.7.1-1-.3-1.5-1.2-1.5-.4 0-.9.1-1.3.3C16.5 5.6 18.5 4.3 21 4.4c1.8.1 2.6 1 2.4 2.6z"/></svg>',
+      link:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-2 2"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l2-2"/></svg>'
+    };
+    return icons[p] || icons.link;
+  }
+
+  /* Dropbox: turn a share link into a direct-streamable URL. */
+  function dropboxDirect(url) {
+    var u = String(url || '').trim();
+    u = u.replace(/^https?:\/\/(www\.)?dropbox\.com/i, 'https://dl.dropboxusercontent.com');
+    u = u.replace(/[?&]dl=\d/gi, '');
+    if (/[?&]raw=1/i.test(u)) return u;
+    u += (u.indexOf('?') >= 0 ? '&' : '?') + 'raw=1';
+    return u;
+  }
+
+  function hasVideoExtension(url) {
+    return /\.(mp4|webm|ogg|ogv|mov|m4v)(\?|$)/i.test(String(url || ''));
+  }
+
+  /* Google Drive: extract the file id from any share form. */
+  function driveFileId(url) {
+    var m = String(url || '').match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (m) return m[1];
+    m = String(url || '').match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (m) return m[1];
+    m = String(url || '').match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (m) return m[1];
+    return null;
+  }
+
+  function youtubeId(url) {
+    var m = String(url || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{6,})/);
+    return m ? m[1] : null;
+  }
+
+  function vimeoId(url) {
+    var m = String(url || '').match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    return m ? m[1] : null;
+  }
+
+  /* Returns { mode:'iframe'|'video'|'launch', src, message } */
+  function resolveEmbed(url) {
+    var provider = detectProvider(url);
+
+    if (provider === 'drive') {
+      var id = driveFileId(url);
+      if (id) return { mode: 'iframe', src: 'https://drive.google.com/file/d/' + id + '/preview' };
+      return { mode: 'launch', message: 'This Google Drive link could not be embedded. Open it in a new tab to watch.' };
+    }
+
+    if (provider === 'dropbox') {
+      if (hasVideoExtension(url)) return { mode: 'video', src: dropboxDirect(url) };
+      // Dropbox folders / non-video links can't reliably embed
+      return { mode: 'launch', message: 'Open this Dropbox recording in a new tab to watch it full-screen.' };
+    }
+
+    if (provider === 'youtube') {
+      var yid = youtubeId(url);
+      if (yid) return { mode: 'iframe', src: 'https://www.youtube.com/embed/' + yid + '?rel=0' };
+    }
+
+    if (provider === 'vimeo') {
+      var vid = vimeoId(url);
+      if (vid) return { mode: 'iframe', src: 'https://player.vimeo.com/video/' + vid };
+    }
+
+    if (provider === 'zoom') {
+      // Zoom cloud recordings refuse to be framed (X-Frame-Options) and often
+      // need a passcode — so we always present them as a launch link.
+      return { mode: 'launch', message: 'Zoom recordings open in their own player. Tap below to watch — enter the passcode if asked.' };
+    }
+
+    // Plain mp4 etc. on any host
+    if (hasVideoExtension(url)) return { mode: 'video', src: url };
+
+    return { mode: 'launch', message: 'Tap below to open this recording in a new tab.' };
+  }
+
+  /* =====================================================================
+     BLOCK RENDERING
+     ===================================================================== */
+  function renderBlocks() {
+    var area = $('contentArea');
+    area.innerHTML = '';
+
+    if (!state.blocks.length) {
+      area.innerHTML =
+        '<div class="empty-state">' +
+          '<div class="es-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>' +
+          '<h3>' + (state.isAdmin ? 'No content yet' : 'Recordings are on the way') + '</h3>' +
+          '<p>' + (state.isAdmin
+            ? 'Use the bar below to add your first video or answer key.'
+            : 'Your teacher hasn\u2019t published the recordings yet. Please check back soon.') + '</p>' +
+        '</div>';
+      return;
+    }
+
+    state.blocks.forEach(function (block, index) {
+      var wrap = document.createElement('div');
+      wrap.className = 'block block-' + block.type;
+      wrap.setAttribute('data-id', block.id);
+
+      wrap.innerHTML = renderBlockInner(block) + renderControls(index);
+      area.appendChild(wrap);
+    });
+
+    // Re-trigger the staggered entrance
+    area.classList.remove('stagger');
+    void area.offsetWidth;
+    area.classList.add('stagger');
+  }
+
+  function renderControls(index) {
+    var last = state.blocks.length - 1;
+    return '' +
+      '<div class="block-controls">' +
+        '<button class="ctrl-btn" title="Move up" ' + (index === 0 ? 'disabled' : '') +
+          ' onclick="moveBlock(' + index + ',-1)"><svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg></button>' +
+        '<button class="ctrl-btn" title="Move down" ' + (index === last ? 'disabled' : '') +
+          ' onclick="moveBlock(' + index + ',1)"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>' +
+        '<button class="ctrl-btn" title="Edit" onclick="editBlock(\'' + state.blocks[index].id + '\')">' +
+          '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg></button>' +
+        '<button class="ctrl-btn danger" title="Delete" onclick="deleteBlock(\'' + state.blocks[index].id + '\')">' +
+          '<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m2 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg></button>' +
+      '</div>';
+  }
+
+  function renderBlockInner(block) {
+    switch (block.type) {
+      case 'heading':   return renderHeading(block);
+      case 'text':      return renderText(block);
+      case 'video':     return renderVideo(block);
+      case 'answerkey': return renderAnswerKey(block);
+      case 'image':     return renderImage(block);
+      case 'divider':   return '<div class="divider-block"><span>✦</span></div>';
+      default:          return '';
+    }
+  }
+
+  function renderHeading(block) {
+    var lvl = block.level === 2 ? ' level-2' : '';
+    return '<div class="block-heading' + lvl + '"><h2>' + escapeHtml(block.text || 'Untitled section') + '</h2></div>';
+  }
+
+  function renderText(block) {
+    return '<div class="block-text"><div class="text-body">' + sanitizeRich(block.html || '') + '</div></div>';
+  }
+
+  function renderVideo(block) {
+    var provider = detectProvider(block.url);
+    var embed = resolveEmbed(block.url);
+    var head =
+      '<div class="video-head">' +
+        '<span class="prov-badge ' + provider + '">' + providerIcon(provider) + providerLabel(provider) + '</span>' +
+        '<span class="video-title">' + escapeHtml(block.title || 'Lesson recording') + '</span>' +
+      '</div>';
+
+    var media = '';
+    if (embed.mode === 'iframe') {
+      media = '<div class="video-frame"><iframe src="' + escapeHtml(embed.src) +
+              '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
+    } else if (embed.mode === 'video') {
+      media = '<div class="video-frame"><video controls preload="metadata" playsinline ' +
+              'src="' + escapeHtml(embed.src) + '"></video></div>';
+    } else {
+      // launch card (Zoom / non-embeddable)
+      var passcode = block.passcode
+        ? '<div class="passcode-chip">Passcode <code>' + escapeHtml(block.passcode) + '</code></div>'
+        : '';
+      media =
+        '<div class="video-launch">' +
+          '<div class="launch-icon"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>' +
+          '<p class="launch-msg">' + escapeHtml(embed.message) + '</p>' +
+          '<a class="btn btn-primary" href="' + escapeHtml(block.url) + '" target="_blank" rel="noopener noreferrer">' +
+            'Watch on ' + providerLabel(provider) +
+            ' <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;"><path d="M7 17L17 7M7 7h10v10"/></svg>' +
+          '</a>' +
+          passcode +
+        '</div>';
+    }
+
+    var note = block.note ? '<div class="video-note">' + escapeHtml(block.note) + '</div>' : '';
+    return '<div class="video-card">' + head + media + note + '</div>';
+  }
+
+  function renderAnswerKey(block) {
+    var provider = detectProvider(block.url);
+    var previewId = 'akprev_' + block.id;
+    var canPreview = false, previewHtml = '';
+
+    if (block.imageUrl) {
+      canPreview = true;
+      previewHtml = '<div class="ak-preview-img"><img src="' + escapeHtml(block.imageUrl) + '" alt="Answer key" /></div>';
+    } else if (provider === 'drive') {
+      var id = driveFileId(block.url);
+      if (id) {
+        canPreview = true;
+        previewHtml = '<div class="ak-preview-inner"><iframe src="https://drive.google.com/file/d/' + id + '/preview" loading="lazy"></iframe></div>';
+      }
+    } else if (block.url && /\.pdf(\?|$)/i.test(block.url)) {
+      canPreview = true;
+      var src = provider === 'dropbox' ? dropboxDirect(block.url) : block.url;
+      previewHtml = '<div class="ak-preview-inner"><iframe src="' + escapeHtml(src) + '" loading="lazy"></iframe></div>';
+    }
+
+    var openLink = block.url
+      ? '<a class="btn btn-secondary btn-sm" href="' + escapeHtml(block.url) + '" target="_blank" rel="noopener noreferrer">Open</a>'
+      : (block.imageUrl
+          ? '<a class="btn btn-secondary btn-sm" href="' + escapeHtml(block.imageUrl) + '" target="_blank" rel="noopener noreferrer">Open</a>'
+          : '');
+
+    var previewBtn = canPreview
+      ? '<button class="btn btn-primary btn-sm" onclick="toggleAnswerPreview(\'' + previewId + '\', this)">Show answers</button>'
+      : '';
+
+    var note = block.note ? '<div class="ak-note">' + escapeHtml(block.note) + '</div>' : '';
+
+    return '' +
+      '<div class="ak-card">' +
+        '<div class="ak-head">' +
+          '<div class="ak-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div>' +
+          '<div class="ak-meta">' +
+            '<div class="ak-label">Answer Key</div>' +
+            '<div class="ak-title">' + escapeHtml(block.title || 'Answer key') + '</div>' +
+          '</div>' +
+          '<div class="ak-actions">' + previewBtn + openLink + '</div>' +
+        '</div>' +
+        note +
+        (canPreview ? '<div class="ak-preview" id="' + previewId + '">' + previewHtml + '</div>' : '') +
+      '</div>';
+  }
+
+  function renderImage(block) {
+    if (!block.url) return '';
+    var cap = block.caption ? '<figcaption>' + escapeHtml(block.caption) + '</figcaption>' : '';
+    return '<div class="img-block"><figure><img src="' + escapeHtml(block.url) + '" alt="' + escapeHtml(block.caption || '') + '" loading="lazy" />' + cap + '</figure></div>';
+  }
+
+  /* Toggle the answer-key preview open/closed */
+  window.toggleAnswerPreview = function (previewId, btn) {
+    var el = $(previewId);
+    if (!el) return;
+    var open = el.classList.toggle('open');
+    btn.textContent = open ? 'Hide answers' : 'Show answers';
+  };
+
+  /* =====================================================================
+     ADMIN — reorder / delete / edit
+     ===================================================================== */
+  window.moveBlock = function (index, dir) {
+    var target = index + dir;
+    if (target < 0 || target >= state.blocks.length) return;
+    var tmp = state.blocks[index];
+    state.blocks[index] = state.blocks[target];
+    state.blocks[target] = tmp;
+    renderBlocks();
+    persistBlocks();
+  };
+
+  window.deleteBlock = function (id) {
+    var block = state.blocks.find(function (b) { return b.id === id; });
+    var label = block ? (block.title || block.text || block.type) : 'this block';
+    if (!confirm('Delete \u201C' + label + '\u201D? This cannot be undone.')) return;
+    state.blocks = state.blocks.filter(function (b) { return b.id !== id; });
+    renderBlocks();
+    persistBlocks();
+    toast('Block deleted', 'success');
+  };
+
+  window.editBlock = function (id) {
+    var block = state.blocks.find(function (b) { return b.id === id; });
+    if (!block) return;
+    openEditor(block.type, block);
+  };
+
+  /* =====================================================================
+     EDITOR MODAL — build the right form per block type
+     ===================================================================== */
+  window.openEditor = function (type, existing) {
+    state.editingType = type;
+    state.editingId = existing ? existing.id : null;
+    state.pendingUpload = existing && existing.imageUrl ? { url: existing.imageUrl } : (existing && existing.url && type === 'image' ? { url: existing.url } : null);
+
+    $('editorTitle').textContent = (existing ? 'Edit ' : 'Add ') + typeLabel(type);
+    $('editorBody').innerHTML = buildEditorForm(type, existing || {});
+    $('editorOverlay').classList.add('open');
+
+    // wire any rich-text / uploader behaviours
+    if (type === 'text') wireRichEditor(existing && existing.html);
+    if (type === 'image' || type === 'answerkey') wireUploader(type);
+    if (type === 'video') wireVideoPreview();
+  };
+
+  window.closeEditor = function () {
+    $('editorOverlay').classList.remove('open');
+    state.editingId = null;
+    state.editingType = null;
+    state.pendingUpload = null;
+  };
+
+  function typeLabel(type) {
+    return ({
+      heading: 'heading', text: 'text', video: 'video',
+      answerkey: 'answer key', image: 'image', divider: 'divider'
+    })[type] || 'block';
+  }
+
+  function buildEditorForm(type, b) {
+    switch (type) {
+      case 'heading':
+        return '' +
+          '<div class="field"><label class="field-label">Heading text</label>' +
+            '<input type="text" class="text-input" id="f_text" value="' + escapeHtml(b.text || '') + '" placeholder="e.g. Lesson 1 — Speed &amp; Average Speed" /></div>' +
+          '<div class="field"><label class="field-label">Size</label>' +
+            '<div class="seg" id="f_level">' +
+              '<button type="button" class="' + (b.level !== 2 ? 'active' : '') + '" data-level="1" onclick="pickSeg(this)">Large</button>' +
+              '<button type="button" class="' + (b.level === 2 ? 'active' : '') + '" data-level="2" onclick="pickSeg(this)">Small</button>' +
+            '</div></div>';
+
+      case 'text':
+        return '' +
+          '<div class="field"><label class="field-label">Text</label>' +
+            '<div class="rt-toolbar">' +
+              '<button type="button" title="Bold" onmousedown="rtCmd(event,\'bold\')"><b>B</b></button>' +
+              '<button type="button" title="Italic" onmousedown="rtCmd(event,\'italic\')"><i>I</i></button>' +
+              '<button type="button" title="Bullet list" onmousedown="rtCmd(event,\'insertUnorderedList\')">&#8226;</button>' +
+              '<button type="button" title="Numbered list" onmousedown="rtCmd(event,\'insertOrderedList\')">1.</button>' +
+              '<button type="button" title="Add link" onmousedown="rtLink(event)">&#128279;</button>' +
+              '<button type="button" title="Clear formatting" onmousedown="rtCmd(event,\'removeFormat\')">&#10005;</button>' +
+            '</div>' +
+            '<div class="rt-editor" id="f_richeditor" contenteditable="true" data-placeholder="Write a note, instructions, or a description for your students…"></div>' +
+            '<p class="form-help">Tip: select text then tap a button to format it.</p>' +
+          '</div>';
+
+      case 'video':
+        return '' +
+          '<div class="field"><label class="field-label">Video title</label>' +
+            '<input type="text" class="text-input" id="f_title" value="' + escapeHtml(b.title || '') + '" placeholder="e.g. Day 1 — Whole Numbers (Full Lesson)" /></div>' +
+          '<div class="field"><label class="field-label">Recording link</label>' +
+            '<input type="url" class="text-input" id="f_url" value="' + escapeHtml(b.url || '') + '" placeholder="Paste a Dropbox, Google Drive or Zoom link" oninput="wireVideoPreview()" /></div>' +
+          '<div id="f_videohint" class="form-help">We auto-detect the source. Dropbox &amp; Drive embed in-page; Zoom opens in its own player.</div>' +
+          '<div class="field" style="margin-top:14px;"><label class="field-label">Zoom passcode (optional)</label>' +
+            '<input type="text" class="text-input" id="f_passcode" value="' + escapeHtml(b.passcode || '') + '" placeholder="Only if the Zoom recording needs one" /></div>' +
+          '<div class="field"><label class="field-label">Caption / note (optional)</label>' +
+            '<input type="text" class="text-input" id="f_note" value="' + escapeHtml(b.note || '') + '" placeholder="e.g. Covers pages 4–9 of the workbook" /></div>';
+
+      case 'answerkey':
+        return '' +
+          '<div class="field"><label class="field-label">Answer key title</label>' +
+            '<input type="text" class="text-input" id="f_title" value="' + escapeHtml(b.title || '') + '" placeholder="e.g. Worksheet 2 — Answer Key" /></div>' +
+          '<div class="field"><label class="field-label">Provide the answer key as…</label>' +
+            '<div class="seg" id="f_aktype">' +
+              '<button type="button" class="' + (!b.imageUrl ? 'active' : '') + '" data-aktype="link" onclick="pickAkType(this)">A link (PDF / Drive)</button>' +
+              '<button type="button" class="' + (b.imageUrl ? 'active' : '') + '" data-aktype="image" onclick="pickAkType(this)">Upload an image</button>' +
+            '</div></div>' +
+          '<div class="field" id="f_aklinkwrap" ' + (b.imageUrl ? 'style="display:none;"' : '') + '>' +
+            '<label class="field-label">Link to the answer key</label>' +
+            '<input type="url" class="text-input" id="f_url" value="' + escapeHtml(b.url || '') + '" placeholder="Paste a Dropbox / Drive PDF link" />' +
+            '<p class="form-help">PDFs &amp; Drive files get an in-page \u201CShow answers\u201D preview.</p>' +
+          '</div>' +
+          '<div class="field" id="f_akimgwrap" ' + (!b.imageUrl ? 'style="display:none;"' : '') + '>' +
+            '<label class="field-label">Answer key image</label>' +
+            buildDropzone() +
+          '</div>' +
+          '<div class="field"><label class="field-label">Note (optional)</label>' +
+            '<input type="text" class="text-input" id="f_note" value="' + escapeHtml(b.note || '') + '" placeholder="e.g. Mark your own work before checking" /></div>';
+
+      case 'image':
+        return '' +
+          '<div class="field"><label class="field-label">Image</label>' + buildDropzone() + '</div>' +
+          '<div class="field"><label class="field-label">Caption (optional)</label>' +
+            '<input type="text" class="text-input" id="f_caption" value="' + escapeHtml(b.caption || '') + '" placeholder="A short description" /></div>';
+
+      case 'divider':
+        return '<p class="form-help" style="font-size:var(--font-size-sm);">A divider is a simple decorative line that separates sections. Just save to add it.</p>';
+
+      default:
+        return '';
+    }
+  }
+
+  function buildDropzone() {
+    var existing = state.pendingUpload && state.pendingUpload.url;
+    return '' +
+      '<div class="dropzone" id="f_dropzone">' +
+        '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>' +
+        '<div>Drag &amp; drop, click to browse, or paste (Ctrl+V)</div>' +
+        '<input type="file" id="f_fileinput" accept="image/*" style="display:none;" />' +
+        '<div class="dz-preview" id="f_dzpreview">' +
+          (existing ? '<img src="' + escapeHtml(existing) + '" alt="preview" />' : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="upload-spin" id="f_uploadspin"><span class="mini-spinner"></span> Uploading…</div>';
+  }
+
+  /* --- Segmented control helpers --- */
+  window.pickSeg = function (btn) {
+    var group = btn.parentElement;
+    group.querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+  };
+
+  window.pickAkType = function (btn) {
+    window.pickSeg(btn);
+    var type = btn.getAttribute('data-aktype');
+    $('f_aklinkwrap').style.display = (type === 'link') ? '' : 'none';
+    $('f_akimgwrap').style.display = (type === 'image') ? '' : 'none';
+    if (type === 'image') wireUploader('answerkey');
+  };
+
+  /* --- Rich text editor wiring --- */
+  function wireRichEditor(initialHtml) {
+    var editor = $('f_richeditor');
+    if (!editor) return;
+    editor.innerHTML = sanitizeRich(initialHtml || '');
+  }
+
+  window.rtCmd = function (e, cmd) {
+    e.preventDefault();
+    document.execCommand(cmd, false, null);
+    $('f_richeditor').focus();
+  };
+
+  window.rtLink = function (e) {
+    e.preventDefault();
+    var url = prompt('Link URL (https://…)');
+    if (url) {
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      document.execCommand('createLink', false, url);
+    }
+    $('f_richeditor').focus();
+  };
+
+  /* --- Video preview hint --- */
+  window.wireVideoPreview = function () {
+    var input = $('f_url');
+    var hint = $('f_videohint');
+    if (!input || !hint) return;
+    var url = input.value.trim();
+    if (!url) {
+      hint.textContent = 'We auto-detect the source. Dropbox & Drive embed in-page; Zoom opens in its own player.';
+      hint.style.color = 'var(--text-tertiary)';
+      return;
+    }
+    var provider = detectProvider(url);
+    var embed = resolveEmbed(url);
+    var modeLabel = embed.mode === 'iframe' ? 'will embed in-page'
+      : embed.mode === 'video' ? 'will play in-page'
+      : 'will open in its own player';
+    hint.innerHTML = 'Detected: <strong>' + providerLabel(provider) + '</strong> — this ' + modeLabel + '.';
+    hint.style.color = 'var(--accent-deep)';
+  };
+
+  /* --- Uploader (image / answer-key image) --- */
+  function wireUploader(blockType) {
+    var dz = $('f_dropzone');
+    var fileInput = $('f_fileinput');
+    if (!dz || !fileInput) return;
+    if (dz.getAttribute('data-wired') === '1') return;
+    dz.setAttribute('data-wired', '1');
+
+    dz.addEventListener('click', function () { fileInput.click(); });
+    fileInput.addEventListener('change', function () {
+      if (fileInput.files && fileInput.files[0]) handleFile(fileInput.files[0]);
+    });
+    dz.addEventListener('dragover', function (e) { e.preventDefault(); dz.classList.add('drag'); });
+    dz.addEventListener('dragleave', function () { dz.classList.remove('drag'); });
+    dz.addEventListener('drop', function (e) {
+      e.preventDefault(); dz.classList.remove('drag');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    });
+    // Paste support
+    document.addEventListener('paste', pasteHandler);
+    dz.setAttribute('data-paste', '1');
+
+    function pasteHandler(e) {
+      if (!$('editorOverlay').classList.contains('open')) return;
+      var items = (e.clipboardData || {}).items || [];
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].type && items[i].type.indexOf('image') === 0) {
+          handleFile(items[i].getAsFile());
+          break;
+        }
+      }
+    }
+  }
+
+  function handleFile(file) {
+    if (!file || file.type.indexOf('image') !== 0) {
+      toast('Please choose an image file', 'error');
+      return;
+    }
+    var spin = $('f_uploadspin');
+    var preview = $('f_dzpreview');
+    if (spin) spin.classList.add('show');
+
+    var path = 'portal_uploads/' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    var ref = storage.ref(path);
+    ref.put(file).then(function (snap) {
+      return snap.ref.getDownloadURL();
+    }).then(function (url) {
+      state.pendingUpload = { url: url };
+      if (preview) preview.innerHTML = '<img src="' + escapeHtml(url) + '" alt="preview" />';
+      if (spin) spin.classList.remove('show');
+      toast('Image uploaded', 'success');
+    }).catch(function (err) {
+      console.error(err);
+      if (spin) spin.classList.remove('show');
+      toast('Upload failed: ' + (err && err.code ? err.code : 'try again'), 'error');
+    });
+  }
+
+  /* --- Save the editor form into a block --- */
+  window.saveEditor = function () {
+    var type = state.editingType;
+    var block = { id: state.editingId || uid(), type: type };
+
+    if (type === 'heading') {
+      var text = ($('f_text').value || '').trim();
+      if (!text) { toast('Please enter heading text', 'error'); return; }
+      var lvlBtn = $('f_level').querySelector('button.active');
+      block.text = text;
+      block.level = lvlBtn ? parseInt(lvlBtn.getAttribute('data-level'), 10) : 1;
+    }
+
+    else if (type === 'text') {
+      var html = sanitizeRich($('f_richeditor').innerHTML || '');
+      if (!$('f_richeditor').textContent.trim()) { toast('Please write some text', 'error'); return; }
+      block.html = html;
+    }
+
+    else if (type === 'video') {
+      var vtitle = ($('f_title').value || '').trim();
+      var vurl = ($('f_url').value || '').trim();
+      if (!vurl) { toast('Please paste a recording link', 'error'); return; }
+      block.title = vtitle || 'Lesson recording';
+      block.url = vurl;
+      block.passcode = ($('f_passcode').value || '').trim();
+      block.note = ($('f_note').value || '').trim();
+    }
+
+    else if (type === 'answerkey') {
+      var aktitle = ($('f_title').value || '').trim();
+      var akTypeBtn = $('f_aktype').querySelector('button.active');
+      var akType = akTypeBtn ? akTypeBtn.getAttribute('data-aktype') : 'link';
+      block.title = aktitle || 'Answer key';
+      block.note = ($('f_note').value || '').trim();
+      if (akType === 'image') {
+        if (!state.pendingUpload || !state.pendingUpload.url) { toast('Please upload an image', 'error'); return; }
+        block.imageUrl = state.pendingUpload.url;
+        block.url = '';
+      } else {
+        var akurl = ($('f_url').value || '').trim();
+        if (!akurl) { toast('Please paste a link to the answer key', 'error'); return; }
+        block.url = akurl;
+        block.imageUrl = '';
+      }
+    }
+
+    else if (type === 'image') {
+      if (!state.pendingUpload || !state.pendingUpload.url) { toast('Please add an image', 'error'); return; }
+      block.url = state.pendingUpload.url;
+      block.caption = ($('f_caption').value || '').trim();
+    }
+
+    else if (type === 'divider') {
+      // nothing extra
+    }
+
+    // Insert or update
+    if (state.editingId) {
+      var idx = state.blocks.findIndex(function (b) { return b.id === state.editingId; });
+      if (idx >= 0) state.blocks[idx] = block;
+    } else {
+      state.blocks.push(block);
+    }
+
+    closeEditor();
+    renderBlocks();
+    persistBlocks();
+    toast(state.editingId ? 'Block updated' : 'Block added', 'success');
+
+    // scroll to the new block if added
+    if (!block._wasEdit) {
+      setTimeout(function () {
+        var el = document.querySelector('[data-id="' + block.id + '"]');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+  };
+
+  /* =====================================================================
+     SETTINGS MODAL
+     ===================================================================== */
+  window.openSettings = function () {
+    $('setEyebrow').value = state.settings.eyebrow || '';
+    $('setTitle').value = state.settings.title || '';
+    $('setSubtitle').value = state.settings.subtitle || '';
+    $('setReassure').value = state.settings.reassure || '';
+    $('setAgree').value = state.settings.agreeText || '';
+    $('setFee').value = state.settings.fee || '';
+    $('settingsOverlay').classList.add('open');
+  };
+  window.closeSettings = function () { $('settingsOverlay').classList.remove('open'); };
+
+  window.saveSettings = function () {
+    state.settings = {
+      eyebrow: $('setEyebrow').value.trim() || 'June Holiday Workshop',
+      title: $('setTitle').value.trim() || 'Recordings & Answer Keys',
+      subtitle: $('setSubtitle').value.trim(),
+      reassure: $('setReassure').value.trim(),
+      agreeText: $('setAgree').value.trim(),
+      fee: $('setFee').value.trim() || '$390'
+    };
+    applySettings();
+    closeSettings();
+    persistSettings();
+    toast('Settings saved', 'success');
+  };
+
+  function applySettings() {
+    var s = state.settings;
+    // Hero
+    $('heroEyebrow').textContent = s.eyebrow;
+    $('heroTitle').innerHTML = escapeHtml(s.title);
+    $('heroSubtitle').textContent = s.subtitle;
+    // Gate
+    $('gateEyebrow').textContent = s.eyebrow;
+    $('gateTitle').innerHTML = 'Your ' + escapeHtml(s.title);
+    $('reassureText').innerHTML = sanitizeRich(s.reassure);
+    $('agreeText').textContent = s.agreeText;
+    $('feeAmtText').textContent = s.fee;
+    // document title
+    document.title = s.title + ' — Polymath Learning Centre';
+  }
+
+  /* =====================================================================
+     FIRESTORE PERSISTENCE
+     ===================================================================== */
+  function portalRef() {
+    return db.collection('apps').doc(APP_DOC_ID);
+  }
+
+  function persistBlocks() {
+    if (!state.isAdmin) return;
+    portalRef().set({
+      blocks: state.blocks,
+      updatedAt: FieldValue.serverTimestamp()
+    }, { merge: true }).catch(function (err) {
+      console.error('persistBlocks', err);
+      toast('Could not save — check your connection', 'error');
+    });
+  }
+
+  function persistSettings() {
+    if (!state.isAdmin) return;
+    portalRef().set({
+      settings: state.settings,
+      updatedAt: FieldValue.serverTimestamp()
+    }, { merge: true }).catch(function (err) {
+      console.error('persistSettings', err);
+      toast('Could not save settings', 'error');
+    });
+  }
+
+  /* Tracks whether the blocks currently on screen came from the built-in
+     seed (true) or from a real saved Firestore copy (false). */
+  var usingSeed = false;
+
+  /* Apply a Firestore document's data to state, falling back to the seed
+     content when no real blocks have been saved yet. */
+  function applyDocData(data) {
+    data = data || {};
+    if (Array.isArray(data.blocks) && data.blocks.length > 0) {
+      state.blocks = data.blocks;
+      usingSeed = false;
+    } else {
+      state.blocks = SEED_BLOCKS.map(function (b) { return Object.assign({}, b); });
+      usingSeed = true;
+    }
+    state.settings = Object.assign(defaultSettings(), data.settings || {});
+    applySettings();
+    renderBlocks();
+  }
+
+  function loadPortal() {
+    return portalRef().get().then(function (doc) {
+      applyDocData(doc.exists ? doc.data() : null);
+      // If the teacher is already signed in and nothing's been saved yet,
+      // promote the seed content into Firestore so it becomes permanent.
+      maybeAutoSeed();
+    }).catch(function (err) {
+      console.error('loadPortal', err);
+      applyDocData(null);
+      toast('Could not load — showing the built-in recordings', 'error');
+    });
+  }
+
+  /* Live updates so students see new content without refreshing */
+  function subscribePortal() {
+    portalRef().onSnapshot(function (doc) {
+      applyDocData(doc.exists ? doc.data() : null);
+    }, function (err) { console.error('subscribe', err); });
+  }
+
+  /* When the admin opens the portal for the first time (no saved blocks),
+     write the seed booklets to Firestore so they persist for students. */
+  function maybeAutoSeed() {
+    if (state.isAdmin && usingSeed) {
+      persistBlocks();
+      usingSeed = false;
+    }
+  }
+
+  /* Log a student's access + agreement (the teacher's record of consent) */
+  function logAccess(email) {
+    try {
+      portalRef().collection('access_logs').add({
+        email: email,
+        agreedToTerms: true,
+        feeAtAgreement: state.settings.fee || '$390',
+        userAgent: navigator.userAgent,
+        agreedAt: FieldValue.serverTimestamp()
+      });
+    } catch (e) { /* best-effort; never block access on logging */ }
+  }
+
+  /* =====================================================================
+     GATE LOGIC (email + agreement)
+     ===================================================================== */
+  function refreshGateButton() {
+    var email = $('emailInput').value.trim();
+    var agreed = $('agreeCheck').checked;
+    $('enterBtn').disabled = !(isValidEmail(email) && agreed);
+  }
+
+  function wireGate() {
+    var emailInput = $('emailInput');
+    var agreeCheck = $('agreeCheck');
+    var agreeBox = $('agreeBox');
+
+    emailInput.addEventListener('input', function () {
+      $('emailError').textContent = '';
+      refreshGateButton();
+    });
+    emailInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !$('enterBtn').disabled) submitGate();
+    });
+
+    agreeBox.addEventListener('click', function (e) {
+      // toggle when clicking anywhere in the box except the (hidden) input itself bubbling twice
+      if (e.target.id === 'agreeCheck') return;
+      agreeCheck.checked = !agreeCheck.checked;
+      syncAgree();
+    });
+    agreeCheck.addEventListener('change', syncAgree);
+
+    function syncAgree() {
+      agreeBox.classList.toggle('checked', agreeCheck.checked);
+      refreshGateButton();
+    }
+  }
+
+  window.submitGate = function () {
+    var email = $('emailInput').value.trim();
+    if (!isValidEmail(email)) {
+      $('emailError').textContent = 'Please enter a valid email address.';
+      return;
+    }
+    if (!$('agreeCheck').checked) return;
+
+    state.viewerEmail = email;
+    try {
+      localStorage.setItem(STORAGE_KEY_EMAIL, email);
+      localStorage.setItem(STORAGE_KEY_AGREED, new Date().toISOString());
+    } catch (e) {}
+
+    logAccess(email);
+    unlockContent(email);
+    toast('Welcome! Enjoy your recordings 🎬', 'success');
+  };
+
+  function unlockContent(email) {
+    $('gate').classList.add('hidden');
+    $('pageContainer').classList.remove('locked');
+    $('viewerStrip').style.display = 'inline-flex';
+    $('viewerEmail').textContent = email;
+  }
+
+  /* =====================================================================
+     ADMIN AUTH (Google sign-in)
+     ===================================================================== */
+  window.onAdminButton = function () {
+    if (state.isAdmin) {
+      // sign out
+      auth.signOut().then(function () {
+        toast('Signed out of admin', 'success');
+      });
+      return;
+    }
+    var provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).then(function (result) {
+      var user = result.user;
+      if (user.email !== ADMIN_EMAIL) {
+        toast('That account is not the teacher account.', 'error');
+        auth.signOut();
+      }
+    }).catch(function (err) {
+      console.error('signIn', err);
+      if (err && err.code !== 'auth/popup-closed-by-user') {
+        toast('Sign-in failed. Please try again.', 'error');
+      }
+    });
+  };
+
+  function enterAdminMode(user) {
+    state.isAdmin = true;
+    document.body.classList.add('is-admin');
+    $('adminPill').style.display = 'inline-flex';
+    $('adminBtnLabel').textContent = 'Sign out';
+    $('versionBadge').textContent = 'Polymath Recordings Portal · v' + APP_VERSION + ' · ' + user.email;
+    // Admin bypasses the student gate entirely
+    $('gate').classList.add('hidden');
+    $('pageContainer').classList.remove('locked');
+    $('viewerStrip').style.display = 'inline-flex';
+    $('viewerEmail').textContent = user.email + ' (teacher)';
+    renderBlocks(); // re-render with controls
+    maybeAutoSeed(); // promote seed booklets into Firestore on first admin visit
+  }
+
+  function exitAdminMode() {
+    state.isAdmin = false;
+    document.body.classList.remove('is-admin');
+    $('adminPill').style.display = 'none';
+    $('adminBtnLabel').textContent = 'Admin';
+    renderBlocks();
+    // If no student session, re-lock and show the gate
+    var savedEmail = null;
+    try { savedEmail = localStorage.getItem(STORAGE_KEY_EMAIL); } catch (e) {}
+    if (savedEmail && isValidEmail(savedEmail)) {
+      state.viewerEmail = savedEmail;
+      unlockContent(savedEmail);
+    } else {
+      $('gate').classList.remove('hidden');
+      $('pageContainer').classList.add('locked');
+      $('viewerStrip').style.display = 'none';
+    }
+  }
+
+  /* =====================================================================
+     BOOT
+     ===================================================================== */
+  function hideBoot() {
+    var boot = $('bootLoader');
+    boot.classList.add('hide');
+    setTimeout(function () { boot.style.display = 'none'; }, 420);
+  }
+
+  function init() {
+    wireGate();
+    applySettings();
+
+    // Restore a returning student's session (so they skip the gate)
+    var savedEmail = null;
+    try { savedEmail = localStorage.getItem(STORAGE_KEY_EMAIL); } catch (e) {}
+
+    // Auth state drives admin mode
+    auth.onAuthStateChanged(function (user) {
+      if (user && user.email === ADMIN_EMAIL) {
+        enterAdminMode(user);
+      } else {
+        if (state.isAdmin) exitAdminMode();
+        // Student path
+        if (savedEmail && isValidEmail(savedEmail) && !state.isAdmin) {
+          state.viewerEmail = savedEmail;
+          unlockContent(savedEmail);
+        }
+      }
+    });
+
+    // Load content (one-shot, then subscribe to live updates)
+    loadPortal().then(function () {
+      hideBoot();
+      subscribePortal();
+    });
+
+    // Safety: never let the boot loader hang forever
+    setTimeout(hideBoot, 6000);
+  }
+
+  // Close modals on overlay click / Escape
+  document.addEventListener('click', function (e) {
+    if (e.target.id === 'editorOverlay') closeEditor();
+    if (e.target.id === 'settingsOverlay') closeSettings();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      if ($('editorOverlay').classList.contains('open')) closeEditor();
+      if ($('settingsOverlay').classList.contains('open')) closeSettings();
+    }
+  });
+
+  // Go
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+  </script>
+</body>
+</html>
